@@ -1,0 +1,16 @@
+version: "3"
+services:
+  db-tech:
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: pass123
+  test-db-tech:
+    image: postgres
+    restart: always
+    ports:
+      - "5433:5432" # 👈 Note the 5433 port
+    environment:
+      POSTGRES_PASSWORD: pass123
