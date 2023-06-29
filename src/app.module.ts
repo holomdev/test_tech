@@ -6,6 +6,7 @@ import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { IamModule } from './iam/iam.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ConfigModule } from '@nestjs/config';
         synchronize: true,
       }),
     }),
+    IamModule,
   ],
   controllers: [AppController],
   providers: [AppService],
