@@ -38,8 +38,17 @@ export class PostsService {
     return post;
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async update(id: number, updatePostDto: UpdatePostDto) {
+    const post = await this.postRepository.preload({
+      id: +id,
+      ...updatePostDto,
+    });
+
+    if (!post) {
+      throw new NotFoundException(`Post #${id} not found`);
+    }
+
+    return await this.postRepository.save(post);
   }
 
   remove(id: number) {
