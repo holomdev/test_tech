@@ -12,6 +12,8 @@ import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
+import { ActiveUser } from '../iam/decorators/active-user.decorator';
+import { ActiveUserData } from '../iam/interfaces/active-user-data.interface';
 
 @Controller('posts')
 export class PostsController {
@@ -23,7 +25,11 @@ export class PostsController {
   }
 
   @Get()
-  findAll(@Query() paginationQuery: PaginationQueryDto) {
+  findAll(
+    @Query() paginationQuery: PaginationQueryDto,
+    @ActiveUser() user: ActiveUserData,
+  ) {
+    console.log(user);
     return this.postsService.findAll(paginationQuery);
   }
 
