@@ -20,8 +20,11 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post()
-  create(@Body() createPostDto: CreatePostDto) {
-    return this.postsService.create(createPostDto);
+  create(
+    @Body() createPostDto: CreatePostDto,
+    @ActiveUser() user: ActiveUserData,
+  ) {
+    return this.postsService.create(createPostDto, +user.sub);
   }
 
   @Get()
@@ -29,22 +32,25 @@ export class PostsController {
     @Query() paginationQuery: PaginationQueryDto,
     @ActiveUser() user: ActiveUserData,
   ) {
-    console.log(user);
-    return this.postsService.findAll(paginationQuery);
+    return this.postsService.findAll(paginationQuery, +user.sub);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.postsService.findOne(+id);
+  findOne(@Param('id') id: string, @ActiveUser() user: ActiveUserData) {
+    return this.postsService.findOne(+id, +user.sub);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.update(+id, updatePostDto);
+  update(
+    @Param('id') id: string,
+    @Body() updatePostDto: UpdatePostDto,
+    @ActiveUser() user: ActiveUserData,
+  ) {
+    return this.postsService.update(+id, updatePostDto, +user.sub);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.postsService.remove(+id);
+  remove(@Param('id') id: string, @ActiveUser() user: ActiveUserData) {
+    return this.postsService.remove(+id, +user.sub);
   }
 }
