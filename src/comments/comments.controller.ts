@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
@@ -9,7 +8,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
-import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Auth } from '../iam/authentication/decorators/auth.decorator';
 import { AuthType } from '../iam/authentication/enums/auth-type.enum';

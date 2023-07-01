@@ -8,7 +8,6 @@ import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { User } from '../users/entities/user.entity';
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { Comment } from '../comments/entities/comment.entity';
-import { ActiveUser } from '../iam/decorators/active-user.decorator';
 
 @Injectable()
 export class PostsService {
