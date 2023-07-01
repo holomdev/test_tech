@@ -24,27 +24,32 @@ export class CommentsService {
     });
   }
 
-  findOne(id: number) {
-    return this.commentRepository.findOne({ where: { id } });
-  }
-
-  async update(id: number, updateCommentDto: UpdateCommentDto, email: string) {
-    const comment = await this.commentRepository.findOne({
-      where: { id },
-    });
+  async findOne(id: number) {
+    const comment = await this.commentRepository.findOne({ where: { id } });
 
     if (!comment) {
       throw new NotFoundException(`Comment #${id} not found`);
     }
 
+    return comment;
+  }
+
+  async update(id: number, updateCommentDto: UpdateCommentDto, email: string) {
+    const comment = await this.findOne(id);
+    this.verifyCommentOwnership(comment, email);
+    const updatedComment = { ...comment, ...updateCommentDto };
+    return this.commentRepository.update(id, updatedComment);
+  }
+
+  async remove(id: number, email: string) {
+    const comment = await this.findOne(id);
+    this.verifyCommentOwnership(comment, email);
+    return await this.commentRepository.remove(comment);
+  }
+
+  verifyCommentOwnership(comment: Comment, email: string) {
     if (comment.email !== email) {
       throw new UnauthorizedException(`This comment does not belong to you`);
     }
-
-    return this.commentRepository.update(id, updateCommentDto);
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} comment`;
   }
 }
