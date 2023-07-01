@@ -51,6 +51,14 @@ export class PostsController {
     return this.postsService.findAll(paginationQuery, +user.sub);
   }
 
+  @Get(':id/comments')
+  findAllComments(
+    @Param('id') id: string,
+    @Query() paginationQuery: PaginationQueryDto,
+  ) {
+    return this.postsService.findAllComments(+id, paginationQuery);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string, @ActiveUser() user: ActiveUserData) {
     return this.postsService.findOne(+id, +user.sub);

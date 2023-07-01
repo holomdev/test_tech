@@ -71,6 +71,17 @@ export class PostsService {
     });
   }
 
+  async findAllComments(id: number, paginationQuery: PaginationQueryDto) {
+    const { limit, offset } = paginationQuery;
+    return await this.commentRepository.find({
+      where: {
+        post: { id: id },
+      },
+      skip: offset,
+      take: limit,
+    });
+  }
+
   async findOne(id: number, userId: number) {
     const post = await this.postRepository.findOne({
       where: {
