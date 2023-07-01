@@ -96,17 +96,7 @@ export class PostsService {
   }
 
   async update(id: number, updatePostDto: UpdatePostDto, userId: number) {
-    const post = await this.postRepository.findOne({
-      where: {
-        id: id,
-        user: { id: userId },
-      },
-    });
-
-    if (!post) {
-      throw new NotFoundException(`Post #${id} not found`);
-    }
-
+    const post = await this.findOne(id, userId);
     const updatedPost = { ...post, ...updatePostDto };
     return await this.postRepository.save(updatedPost);
   }
