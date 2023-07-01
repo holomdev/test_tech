@@ -14,6 +14,7 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { ActiveUser } from '../iam/decorators/active-user.decorator';
 import { ActiveUserData } from '../iam/interfaces/active-user-data.interface';
+import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -25,6 +26,21 @@ export class PostsController {
     @ActiveUser() user: ActiveUserData,
   ) {
     return this.postsService.create(createPostDto, +user.sub);
+  }
+
+  @Post(':id/comments')
+  createComment(
+    @Param('id') id: string,
+    @Body() createCommentDto: CreateCommentDto,
+    @ActiveUser() user: ActiveUserData,
+  ) {
+    const { username, email } = user;
+    return this.postsService.createComment(
+      +id,
+      createCommentDto,
+      username,
+      email,
+    );
   }
 
   @Get()
