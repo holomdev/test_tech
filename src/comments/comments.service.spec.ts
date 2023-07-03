@@ -114,5 +114,14 @@ describe('CommentsService', () => {
         expect(result).toEqual({ affected: 1 });
       });
     });
+    describe('otherwise', () => {
+      it('should throw the "NotFoundException', async () => {
+        const commentId = 1;
+        const email = 'test@example.com';
+        const updateCommentDto = { body: 'Updated comment' };
+
+        jest.spyOn(service, 'findOne').mockResolvedValueOnce(undefined);
+      });
+    });
   });
 });
