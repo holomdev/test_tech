@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { Test, TestingModule } from '@nestjs/testing';
 import { CommentsService } from './comments.service';
 import { Repository } from 'typeorm';
@@ -10,6 +11,7 @@ const createMockRepository = <T = any>(): MockRepository<T> => ({
   findOne: jest.fn(),
   remove: jest.fn(),
   find: jest.fn(),
+  update: jest.fn(),
 });
 
 describe('CommentsService', () => {
@@ -79,6 +81,38 @@ describe('CommentsService', () => {
       });
 
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('update', () => {
+    describe('when comment with ID exists', () => {
+      it('should update a comment', async () => {
+        const commentId = 1;
+        const email = 'test@example.com';
+        const updateCommentDto = { body: 'Updated comment' };
+        const comment = {
+          id: commentId,
+          name: 'test',
+          body: 'Test comment',
+          email,
+        } as Comment;
+
+        jest.spyOn(service, 'findOne').mockResolvedValueOnce(comment);
+        jest
+          .spyOn(service, 'verifyCommentOwnership')
+          .mockImplementationOnce(() => {});
+
+        const updateSpy = commentRepository.update.mockResolvedValueOnce({
+          affected: 1,
+        });
+
+        const result = await service.update(commentId, updateCommentDto, email);
+        expect(updateSpy).toHaveBeenCalledWith(commentId, {
+          ...comment,
+          ...updateCommentDto,
+        });
+        expect(result).toEqual({ affected: 1 });
+      });
     });
   });
 });
