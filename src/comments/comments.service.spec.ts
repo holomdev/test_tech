@@ -66,4 +66,19 @@ describe('CommentsService', () => {
       });
     });
   });
+
+  describe('findAll', () => {
+    it('should find all comments', async () => {
+      const paginationQuery = { limit: 10, offset: 0 };
+      commentRepository.find.mockResolvedValueOnce([]);
+      const result = await service.findAll(paginationQuery);
+
+      expect(commentRepository.find).toHaveBeenCalledWith({
+        skip: paginationQuery.offset,
+        take: paginationQuery.limit,
+      });
+
+      expect(result).toEqual([]);
+    });
+  });
 });
