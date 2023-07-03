@@ -58,13 +58,11 @@ describe('CommentsService', () => {
       it('should throw the "NotFoundException"', async () => {
         const commentId = 1;
         commentRepository.findOne.mockResolvedValueOnce(undefined);
-        try {
-          await service.findOne(commentId);
-          expect(false).toBeTruthy();
-        } catch (err) {
-          expect(err).toBeInstanceOf(NotFoundException);
-          expect(err.message).toEqual(`Comment #${commentId} not found`);
-        }
+
+        const promise = service.findOne(commentId);
+        await expect(promise).rejects.toThrow(
+          new NotFoundException(`Comment #${commentId} not found`),
+        );
       });
     });
   });
