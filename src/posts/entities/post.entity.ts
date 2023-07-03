@@ -1,5 +1,5 @@
-import { User } from 'src/users/entities/user.entity';
 import { Comment } from '../../comments/entities/comment.entity';
+import { User } from '../../users/entities/user.entity';
 import {
   Column,
   Entity,
