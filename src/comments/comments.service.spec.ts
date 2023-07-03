@@ -4,7 +4,7 @@ import { CommentsService } from './comments.service';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Comment } from './entities/comment.entity';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, UnauthorizedException } from '@nestjs/common';
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 const createMockRepository = <T = any>(): MockRepository<T> => ({
@@ -123,6 +123,22 @@ describe('CommentsService', () => {
         const promise = service.update(commentId, updateCommentDto, email);
         await expect(promise).rejects.toThrow(
           new NotFoundException(`Comment #${commentId} not found`),
+        );
+      });
+
+      it('should throw the "UnauthorizedException', async () => {
+        const commentId = 1;
+        const email = 'test@example.com';
+        const updateCommentDto = { body: 'Updated comment' };
+        const comment = {
+          id: commentId,
+          email: 'test2@example.com',
+        } as Comment;
+
+        jest.spyOn(service, 'findOne').mockResolvedValueOnce(comment);
+        const promise = service.update(commentId, updateCommentDto, email);
+        await expect(promise).rejects.toThrow(
+          new UnauthorizedException(`This comment does not belong to you`),
         );
       });
     });
