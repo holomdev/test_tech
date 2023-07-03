@@ -143,4 +143,24 @@ describe('CommentsService', () => {
       });
     });
   });
+
+  describe('remove', () => {
+    it('when comment with ID exists', async () => {
+      const commentId = 1;
+      const email = 'test@example.com';
+      const comment = { id: commentId, email: email } as Comment;
+
+      jest.spyOn(service, 'findOne').mockResolvedValueOnce(comment);
+      jest
+        .spyOn(service, 'verifyCommentOwnership')
+        .mockImplementationOnce(() => {});
+
+      const removeSpy = commentRepository.remove.mockResolvedValueOnce(comment);
+
+      const result = await service.remove(commentId, email);
+
+      expect(removeSpy).toHaveBeenCalledWith(comment);
+      expect(result).toEqual(comment);
+    });
+  });
 });
