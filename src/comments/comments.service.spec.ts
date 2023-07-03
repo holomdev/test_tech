@@ -120,7 +120,12 @@ describe('CommentsService', () => {
         const email = 'test@example.com';
         const updateCommentDto = { body: 'Updated comment' };
 
-        jest.spyOn(service, 'findOne').mockResolvedValueOnce(undefined);
+        commentRepository.findOne.mockResolvedValueOnce(undefined);
+
+        const promise = service.update(commentId, updateCommentDto, email);
+        await expect(promise).rejects.toThrow(
+          new NotFoundException(`Comment #${commentId} not found`),
+        );
       });
     });
   });
