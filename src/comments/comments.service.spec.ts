@@ -178,6 +178,21 @@ describe('CommentsService', () => {
           new NotFoundException(`Comment #${commentId} not found`),
         );
       });
+
+      it('should throw the "UnauthorizedException', async () => {
+        const commentId = 1;
+        const email = 'test@example.com';
+        const comment = {
+          id: commentId,
+          email: 'test2@example.com',
+        } as Comment;
+
+        commentRepository.findOne.mockResolvedValueOnce(comment);
+        const promise = service.remove(commentId, email);
+        await expect(promise).rejects.toThrow(
+          new UnauthorizedException(`This comment does not belong to you`),
+        );
+      });
     });
   });
 });
