@@ -162,5 +162,22 @@ describe('CommentsService', () => {
       expect(removeSpy).toHaveBeenCalledWith(comment);
       expect(result).toEqual(comment);
     });
+
+    describe('otherwise', () => {
+      it('should throw the "NotFoundException', async () => {
+        const commentId = 1;
+        const email = 'test@example.com';
+
+        commentRepository.findOne.mockResolvedValueOnce(undefined);
+        jest
+          .spyOn(service, 'verifyCommentOwnership')
+          .mockImplementationOnce(() => {});
+
+        const promise = service.remove(commentId, email);
+        await expect(promise).rejects.toThrow(
+          new NotFoundException(`Comment #${commentId} not found`),
+        );
+      });
+    });
   });
 });
