@@ -48,4 +48,30 @@ describe('PostsService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  describe('findOne', () => {
+    describe('when post with ID exists', () => {
+      it('should return the comment object', async () => {
+        const postId = 1;
+        const userId = 1;
+        const post = {
+          id: postId,
+          title: 'post title',
+          body: 'post body',
+        };
+
+        postRepository.findOne.mockReturnValueOnce(post);
+        const result = await service.findOne(postId, userId);
+
+        expect(postRepository.findOne).toHaveBeenCalledWith({
+          where: {
+            id: postId,
+            user: { id: userId },
+          },
+        });
+        expect(postRepository.findOne).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(post);
+      });
+    });
+  });
 });
