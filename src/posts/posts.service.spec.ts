@@ -119,18 +119,23 @@ describe('PostsService', () => {
   describe('create', () => {
     describe('when user exists', () => {
       it('should create a post', async () => {
+        const userId = 1;
         const createPostDto: CreatePostDto = {
           title: 'Test Post',
           body: 'This is a test post',
         };
-        const userId = 1;
-        const user = new User();
-        user.id = userId;
-        user.email = 'test@example.com';
+        const user = {
+          id: userId,
+          email: 'test@example.com',
+        } as User;
+        const post = {
+          ...createPostDto,
+          user,
+        } as Post;
 
         userRepository.findOne.mockReturnValueOnce(user);
-        postRepository.create.mockReturnValueOnce(new Post());
-        postRepository.save.mockReturnValueOnce(new Post());
+        postRepository.create.mockReturnValueOnce(post);
+        postRepository.save.mockReturnValueOnce(post);
 
         const result = await service.create(createPostDto, userId);
 
@@ -138,12 +143,18 @@ describe('PostsService', () => {
           where: { id: userId },
           select: ['id', 'email'],
         });
+        expect(userRepository.findOne).toHaveBeenCalledTimes(1);
+
         expect(postRepository.create).toHaveBeenCalledWith({
           ...createPostDto,
           user,
         });
-        expect(postRepository.save).toHaveBeenCalledWith(expect.any(Post));
-        expect(result).toBeInstanceOf(Post);
+        expect(postRepository.create).toHaveBeenCalledTimes(1);
+
+        expect(postRepository.save).toHaveBeenCalledWith(post);
+        expect(postRepository.save).toHaveBeenCalledTimes(1);
+
+        expect(result).toEqual(post);
       });
     });
 
