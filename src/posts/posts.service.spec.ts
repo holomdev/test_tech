@@ -7,6 +7,7 @@ import { User } from '../users/entities/user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 const createMockRepository = <T = any>(): MockRepository<T> => ({
@@ -163,6 +164,40 @@ describe('PostsService', () => {
         await expect(promise).rejects.toThrow(
           new NotFoundException(`User #${userId} not found`),
         );
+      });
+    });
+  });
+
+  describe('update', () => {
+    describe('when post with ID exists', () => {
+      it('should update a comment', async () => {
+        const postId = 1;
+        const userId = 10;
+        const updatePostDto: UpdatePostDto = {
+          body: 'a new body',
+        };
+        const post = {
+          id: postId,
+          title: 'title post',
+          body: 'body post',
+        } as Post;
+
+        jest.spyOn(service, 'findOne').mockResolvedValueOnce(post);
+        postRepository.save.mockResolvedValueOnce({
+          affected: 1,
+        });
+
+        const result = await service.update(postId, updatePostDto, userId);
+        expect(service.findOne).toHaveBeenCalledWith(postId, userId);
+        expect(service.findOne).toHaveBeenCalledTimes(1);
+        expect(postRepository.save).toHaveBeenCalledWith({
+          ...post,
+          ...updatePostDto,
+        });
+        expect(postRepository.save).toHaveBeenCalledTimes(1);
+        expect(result).toEqual({
+          affected: 1,
+        });
       });
     });
   });
