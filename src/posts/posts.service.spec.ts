@@ -6,6 +6,7 @@ import { Comment } from '../comments/entities/comment.entity';
 import { User } from '../users/entities/user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException } from '@nestjs/common';
+import { CreatePostDto } from './dto/create-post.dto';
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 const createMockRepository = <T = any>(): MockRepository<T> => ({
@@ -13,6 +14,8 @@ const createMockRepository = <T = any>(): MockRepository<T> => ({
   remove: jest.fn(),
   find: jest.fn(),
   update: jest.fn(),
+  create: jest.fn(),
+  save: jest.fn(),
 });
 
 describe('PostsService', () => {
@@ -109,6 +112,38 @@ describe('PostsService', () => {
       expect(postRepository.find).toHaveBeenCalledTimes(1);
 
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('create', () => {
+    describe('when user exists', () => {
+      it('should create a post', async () => {
+        const createPostDto: CreatePostDto = {
+          title: 'Test Post',
+          body: 'This is a test post',
+        };
+        const userId = 1;
+        const user = new User();
+        user.id = userId;
+        user.email = 'test@example.com';
+
+        userRepository.findOne.mockReturnValueOnce(Promise.resolve(user));
+        postRepository.create.mockReturnValueOnce(new Post());
+        postRepository.save.mockReturnValueOnce(Promise.resolve(new Post()));
+
+        const result = await service.create(createPostDto, userId);
+
+        expect(userRepository.findOne).toHaveBeenCalledWith({
+          where: { id: userId },
+          select: ['id', 'email'],
+        });
+        expect(postRepository.create).toHaveBeenCalledWith({
+          ...createPostDto,
+          user,
+        });
+        expect(postRepository.save).toHaveBeenCalledWith(expect.any(Post));
+        expect(result).toBeInstanceOf(Post);
+      });
     });
   });
 });
