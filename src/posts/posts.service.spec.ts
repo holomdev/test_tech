@@ -223,6 +223,7 @@ describe('PostsService', () => {
         postRepository.findOne.mockResolvedValueOnce(undefined);
         const promise = service.update(postId, updatePostDto, userId);
 
+        expect(postRepository.findOne).toHaveBeenCalledTimes(1);
         await expect(promise).rejects.toThrow(
           new NotFoundException(`Post #${postId} not found`),
         );
