@@ -106,6 +106,8 @@ describe('PostsService', () => {
         take: paginationQuery.limit,
       });
 
+      expect(postRepository.find).toHaveBeenCalledTimes(1);
+
       expect(result).toEqual([]);
     });
   });
