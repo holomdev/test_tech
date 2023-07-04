@@ -230,4 +230,57 @@ describe('PostsService', () => {
       });
     });
   });
+
+  describe('remove', () => {
+    describe('when post with ID exists', () => {
+      it('should remove a post', async () => {
+        const postId = 1;
+        const userId = 10;
+
+        const user = {
+          id: userId,
+          email: 'test@example.com',
+        } as User;
+
+        const post = {
+          id: postId,
+          title: 'Test Post',
+          body: 'This is a test post',
+          user,
+        } as Post;
+
+        postRepository.findOne.mockReturnValueOnce(post);
+        postRepository.remove.mockReturnValueOnce(post);
+        const result = await service.remove(postId, userId);
+
+        expect(postRepository.findOne).toHaveBeenCalledWith({
+          where: {
+            id: postId,
+            user: { id: userId },
+          },
+        });
+        expect(postRepository.findOne).toHaveBeenCalledTimes(1);
+
+        expect(postRepository.remove).toHaveBeenCalledWith(post);
+        expect(postRepository.remove).toBeCalledTimes(1);
+
+        expect(result).toEqual(post);
+      });
+    });
+
+    describe('otherwise', () => {
+      it('should throw a NotFoundException', async () => {
+        const postId = 1;
+        const userId = 10;
+
+        postRepository.findOne.mockResolvedValueOnce(undefined);
+        const promise = service.remove(postId, userId);
+
+        expect(postRepository.findOne).toHaveBeenCalledTimes(1);
+        await expect(promise).rejects.toThrow(
+          new NotFoundException(`Post #${postId} not found`),
+        );
+      });
+    });
+  });
 });
