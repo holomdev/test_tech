@@ -52,7 +52,7 @@ describe('PostsService', () => {
 
   describe('findOne', () => {
     describe('when post with ID exists', () => {
-      it('should return the comment object', async () => {
+      it('should return the post object', async () => {
         const postId = 1;
         const userId = 1;
         const post = {
