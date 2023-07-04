@@ -160,7 +160,9 @@ describe('PostsService', () => {
           where: { id: userId },
           select: ['id', 'email'],
         });
-        await expect(promise).rejects.toThrowError(NotFoundException);
+        await expect(promise).rejects.toThrow(
+          new NotFoundException(`User #${userId} not found`),
+        );
       });
     });
   });
