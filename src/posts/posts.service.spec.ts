@@ -89,4 +89,24 @@ describe('PostsService', () => {
       });
     });
   });
+
+  describe('findAll', () => {
+    it('should find all posts', async () => {
+      const userId = 1;
+      const paginationQuery = { limit: 10, offset: 0 };
+
+      postRepository.find.mockResolvedValueOnce([]);
+      const result = await service.findAll(paginationQuery, userId);
+
+      expect(postRepository.find).toHaveBeenCalledWith({
+        where: {
+          user: { id: userId },
+        },
+        skip: paginationQuery.offset,
+        take: paginationQuery.limit,
+      });
+
+      expect(result).toEqual([]);
+    });
+  });
 });
