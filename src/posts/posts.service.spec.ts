@@ -127,9 +127,9 @@ describe('PostsService', () => {
         user.id = userId;
         user.email = 'test@example.com';
 
-        userRepository.findOne.mockReturnValueOnce(Promise.resolve(user));
+        userRepository.findOne.mockReturnValueOnce(user);
         postRepository.create.mockReturnValueOnce(new Post());
-        postRepository.save.mockReturnValueOnce(Promise.resolve(new Post()));
+        postRepository.save.mockReturnValueOnce(new Post());
 
         const result = await service.create(createPostDto, userId);
 
@@ -143,6 +143,24 @@ describe('PostsService', () => {
         });
         expect(postRepository.save).toHaveBeenCalledWith(expect.any(Post));
         expect(result).toBeInstanceOf(Post);
+      });
+    });
+
+    describe('otherwise', () => {
+      it('should throw a NotFoundException', async () => {
+        const createPostDto: CreatePostDto = {
+          title: 'Test Post',
+          body: 'This is a test post',
+        };
+        const userId = 1;
+        userRepository.findOne.mockReturnValueOnce(undefined);
+
+        const promise = service.create(createPostDto, userId);
+        expect(userRepository.findOne).toHaveBeenCalledWith({
+          where: { id: userId },
+          select: ['id', 'email'],
+        });
+        await expect(promise).rejects.toThrowError(NotFoundException);
       });
     });
   });
