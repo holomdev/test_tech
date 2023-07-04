@@ -181,7 +181,7 @@ describe('PostsService', () => {
 
   describe('update', () => {
     describe('when post with ID exists', () => {
-      it('should update a comment', async () => {
+      it('should update a post', async () => {
         const postId = 1;
         const userId = 10;
         const updatePostDto: UpdatePostDto = {
