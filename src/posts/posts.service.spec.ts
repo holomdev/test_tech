@@ -211,5 +211,22 @@ describe('PostsService', () => {
         });
       });
     });
+
+    describe('otherwise', () => {
+      it('should throw a NotFoundException', async () => {
+        const postId = 1;
+        const userId = 10;
+        const updatePostDto: UpdatePostDto = {
+          body: 'a new body',
+        };
+
+        postRepository.findOne.mockResolvedValueOnce(undefined);
+        const promise = service.update(postId, updatePostDto, userId);
+
+        await expect(promise).rejects.toThrow(
+          new NotFoundException(`Post #${postId} not found`),
+        );
+      });
+    });
   });
 });
