@@ -5,6 +5,7 @@ import { Post } from './entities/post.entity';
 import { Comment } from '../comments/entities/comment.entity';
 import { User } from '../users/entities/user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { NotFoundException } from '@nestjs/common';
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 const createMockRepository = <T = any>(): MockRepository<T> => ({
@@ -71,6 +72,20 @@ describe('PostsService', () => {
         });
         expect(postRepository.findOne).toHaveBeenCalledTimes(1);
         expect(result).toEqual(post);
+      });
+    });
+
+    describe('otherwise', () => {
+      it('should throw the "NotFoundException"', async () => {
+        const postId = 1;
+        const userId = 1;
+
+        postRepository.findOne.mockReturnValueOnce(undefined);
+        const promise = service.findOne(postId, userId);
+
+        await expect(promise).rejects.toThrow(
+          new NotFoundException(`Post #${postId} not found`),
+        );
       });
     });
   });
