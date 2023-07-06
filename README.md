@@ -4,7 +4,7 @@
 
 ## Descripción
 
-Esta es una aplicación de prueba backend desarrollada en Node.js utilizando TypeScript y el framework [Nest](https://github.com/nestjs/nest). La aplicación cuenta con pruebas unitarias y de integración, migraciones y seeders. Además, ofrece soporte para rutas públicas y rutas protegidas mediante el uso de JWT. También incluye documentación de la API generada con Swagger.
+Esta es una aplicación Backend desarrollada en Node.js utilizando TypeScript y el framework [Nest](https://github.com/nestjs/nest). La aplicación cuenta con pruebas unitarias y de integración, migraciones y seeders. Además, ofrece soporte para rutas públicas y rutas protegidas mediante el uso de JWT. También incluye documentación de la API generada con Swagger.
 
 ## Dependencias
 
