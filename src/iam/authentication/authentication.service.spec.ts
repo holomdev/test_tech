@@ -8,11 +8,13 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigType } from '@nestjs/config';
 import jwtConfig from '../config/jwt.config';
 import { SignUpDto } from './dto/sign-up.dto';
+import { SignInDto } from './dto/sign-in.dto';
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 const createMockRepository = <T = any>(): MockRepository<T> => ({
   findOne: jest.fn(),
   save: jest.fn(),
+  findOneBy: jest.fn(),
 });
 
 describe('AuthenticationService', () => {
@@ -92,6 +94,30 @@ describe('AuthenticationService', () => {
 
         const promise = service.signUp(signUpDto);
         await expect(promise).rejects.toThrowError();
+      });
+    });
+  });
+
+  describe('signIn', () => {
+    it('should a user signin', async () => {
+      const accessToken = 'access123';
+      const signInDto: SignInDto = {
+        email: 'test@example.com',
+        password: 'password123',
+      };
+      const user = {
+        id: 1,
+        email: 'test@example.com',
+        password: 'some_hashing_password',
+      } as User;
+
+      userRepository.findOneBy.mockResolvedValueOnce(user);
+      jest.spyOn(hashingService, 'compare').mockResolvedValueOnce(true);
+      jest.spyOn(jwtService, 'signAsync').mockResolvedValueOnce(accessToken);
+
+      const result = await service.signIn(signInDto);
+      expect(result).toEqual({
+        accessToken,
       });
     });
   });
