@@ -115,6 +115,18 @@ describe('AuthenticationService', () => {
       jest.spyOn(jwtService, 'signAsync').mockResolvedValueOnce(accessToken);
 
       const result = await service.signIn(signInDto);
+
+      expect(userRepository.findOneBy).toBeCalledWith({
+        email: signInDto.email,
+      });
+      expect(userRepository.findOneBy).toBeCalledTimes(1);
+
+      expect(hashingService.compare).toBeCalledWith(
+        signInDto.password,
+        user.password,
+      );
+      expect(hashingService.compare).toBeCalledTimes(1);
+
       expect(result).toEqual({
         accessToken,
       });
