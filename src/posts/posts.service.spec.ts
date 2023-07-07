@@ -353,4 +353,26 @@ describe('PostsService', () => {
       });
     });
   });
+
+  describe('findAllComments', () => {
+    describe('when post with ID exists', () => {
+      it('should find comments from post', async () => {
+        const postId = 1;
+        const paginationQuery = { limit: 10, offset: 0 };
+        commentRepository.find.mockResolvedValueOnce([]);
+
+        const result = await service.findAllComments(postId, paginationQuery);
+
+        expect(commentRepository.find).toHaveBeenCalledWith({
+          where: {
+            post: { id: postId },
+          },
+          skip: paginationQuery.offset,
+          take: paginationQuery.limit,
+        });
+
+        expect(result).toEqual([]);
+      });
+    });
+  });
 });
