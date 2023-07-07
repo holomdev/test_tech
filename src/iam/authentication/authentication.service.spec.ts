@@ -70,7 +70,7 @@ describe('AuthenticationService', () => {
         password: 'password123',
       };
 
-      hashingService.hash = jest.fn().mockResolvedValueOnce(hashingPass);
+      jest.spyOn(hashingService, 'hash').mockResolvedValueOnce(hashingPass);
       userRepository.save.mockResolvedValueOnce(signUpDto);
 
       const result = await service.signUp(signUpDto);
