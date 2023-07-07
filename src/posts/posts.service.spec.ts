@@ -328,5 +328,29 @@ describe('PostsService', () => {
         expect(result).toEqual(comment);
       });
     });
+
+    describe('otherwise', () => {
+      it('should throw a NotFoundException', async () => {
+        const postId = 1;
+        const createCommentDto: CreateCommentDto = {
+          body: 'this is a example comment',
+        };
+        const userName = 'test_name';
+        const email = 'test@example.com';
+
+        postRepository.findOne.mockResolvedValueOnce(undefined);
+
+        const promise = service.createComment(
+          postId,
+          createCommentDto,
+          userName,
+          email,
+        );
+
+        await expect(promise).rejects.toThrow(
+          new NotFoundException(`Post #${postId} not found`),
+        );
+      });
+    });
   });
 });
