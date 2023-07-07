@@ -79,5 +79,20 @@ describe('AuthenticationService', () => {
       expect(userRepository.save).toHaveBeenCalledTimes(1);
       expect(result).toBeUndefined();
     });
+
+    describe('otherwise', () => {
+      it('should throw a Error', async () => {
+        const signUpDto: SignUpDto = {
+          name: 'test_name',
+          email: 'test@example.com',
+          username: 'username_test',
+          password: 'password123',
+        };
+        userRepository.save.mockRejectedValueOnce(new Error());
+
+        const promise = service.signUp(signUpDto);
+        await expect(promise).rejects.toThrowError();
+      });
+    });
   });
 });
