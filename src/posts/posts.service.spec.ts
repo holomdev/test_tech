@@ -8,6 +8,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 const createMockRepository = <T = any>(): MockRepository<T> => ({
@@ -280,6 +281,51 @@ describe('PostsService', () => {
         await expect(promise).rejects.toThrow(
           new NotFoundException(`Post #${postId} not found`),
         );
+      });
+    });
+  });
+
+  describe('createComment', () => {
+    describe('when post with ID exists', () => {
+      it('should create comment from post', async () => {
+        const postId = 1;
+        const createCommentDto: CreateCommentDto = {
+          body: 'this is a example comment',
+        };
+        const userName = 'test_name';
+        const email = 'test@example.com';
+        const post = {
+          id: postId,
+          title: 'Test Post',
+          body: 'This is a test post',
+        } as Post;
+
+        const comment = {
+          ...createCommentDto,
+          email,
+          name: userName,
+          post,
+        } as Comment;
+
+        postRepository.findOne.mockResolvedValueOnce(post);
+        commentRepository.create.mockResolvedValueOnce(comment);
+        commentRepository.save.mockResolvedValueOnce(comment);
+
+        const result = await service.createComment(
+          postId,
+          createCommentDto,
+          userName,
+          email,
+        );
+
+        expect(postRepository.findOne).toHaveBeenCalledWith({
+          where: { id: postId },
+        });
+        expect(postRepository.findOne).toHaveBeenCalledTimes(1);
+
+        expect(commentRepository.create).toHaveBeenCalledWith(comment);
+        expect(commentRepository.create).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(comment);
       });
     });
   });
