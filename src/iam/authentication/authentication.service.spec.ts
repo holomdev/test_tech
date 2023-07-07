@@ -136,6 +136,26 @@ describe('AuthenticationService', () => {
           new UnauthorizedException('User does not exists'),
         );
       });
+
+      it('should throw a UnauthorizedException when Password does not match', async () => {
+        const signInDto: SignInDto = {
+          email: 'test@example.com',
+          password: 'password123',
+        };
+        const user = {
+          id: 1,
+          email: 'test@example.com',
+          password: 'some_hashing_password',
+        } as User;
+        userRepository.findOneBy.mockResolvedValueOnce(user);
+        jest.spyOn(hashingService, 'compare').mockResolvedValueOnce(false);
+
+        const promise = service.signIn(signInDto);
+
+        await expect(promise).rejects.toThrow(
+          new UnauthorizedException('Password does not match'),
+        );
+      });
     });
   });
 });
