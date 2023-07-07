@@ -9,6 +9,7 @@ import { ConfigModule, ConfigType } from '@nestjs/config';
 import jwtConfig from '../config/jwt.config';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
+import { UnauthorizedException } from '@nestjs/common';
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 const createMockRepository = <T = any>(): MockRepository<T> => ({
@@ -118,6 +119,22 @@ describe('AuthenticationService', () => {
       const result = await service.signIn(signInDto);
       expect(result).toEqual({
         accessToken,
+      });
+    });
+
+    describe('otherwise', () => {
+      it('should throw a UnauthorizedException when user does not exists', async () => {
+        const signInDto: SignInDto = {
+          email: 'test@example.com',
+          password: 'password123',
+        };
+
+        userRepository.findOneBy.mockResolvedValueOnce(undefined);
+        const promise = service.signIn(signInDto);
+
+        await expect(promise).rejects.toThrow(
+          new UnauthorizedException('User does not exists'),
+        );
       });
     });
   });
