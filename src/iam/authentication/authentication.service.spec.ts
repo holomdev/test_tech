@@ -5,7 +5,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from '../../users/entities/user.entity';
 import { HashingService } from '../hashing/hashing.service';
 import { JwtService } from '@nestjs/jwt';
-import { ConfigModule, ConfigType } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import jwtConfig from '../config/jwt.config';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
@@ -20,7 +20,6 @@ const createMockRepository = <T = any>(): MockRepository<T> => ({
 
 describe('AuthenticationService', () => {
   let service: AuthenticationService;
-  let jwtConfiguration: ConfigType<typeof jwtConfig>;
   let hashingService: HashingService;
   let jwtService: JwtService;
   let userRepository: MockRepository;
@@ -51,7 +50,6 @@ describe('AuthenticationService', () => {
     }).compile();
 
     service = module.get<AuthenticationService>(AuthenticationService);
-    jwtConfiguration = module.get<ConfigType<typeof jwtConfig>>(jwtConfig.KEY);
     hashingService = module.get<HashingService>(HashingService);
     jwtService = module.get<JwtService>(JwtService);
     userRepository = module.get<MockRepository>(getRepositoryToken(User));
