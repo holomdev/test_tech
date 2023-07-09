@@ -24,8 +24,8 @@ describe('[Feature] Authentication - /authentication (e2e)', () => {
     await app.init();
   });
 
-  it.todo('sign-up [GET /]');
-  it.todo('sign-in [GET /]');
+  it.todo('sign-up [POST /]');
+  it.todo('sign-in [POST /]');
 
   afterAll(async () => {
     await app.close();
