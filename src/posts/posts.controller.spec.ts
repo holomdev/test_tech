@@ -129,4 +129,13 @@ describe('PostsController', () => {
       user.sub,
     );
   });
+
+  it('should call method remove in PostsService', async () => {
+    const postId = '1';
+    jest.spyOn(postsService, 'remove');
+
+    await controller.remove(postId, user);
+
+    expect(postsService.remove).toHaveBeenCalledWith(+postId, user.sub);
+  });
 });
