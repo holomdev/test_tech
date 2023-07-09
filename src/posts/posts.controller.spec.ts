@@ -4,6 +4,7 @@ import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { ActiveUserData } from '../iam/interfaces/active-user-data.interface';
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
+import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 
 const user: ActiveUserData = {
   sub: 1,
@@ -71,6 +72,22 @@ describe('PostsController', () => {
       createCommentDto,
       user.username,
       user.email,
+    );
+  });
+
+  it('should call method findAll in PostsService', async () => {
+    const paginationQuery: PaginationQueryDto = {
+      limit: 10,
+      offset: 0,
+    };
+
+    jest.spyOn(postsService, 'findAll');
+
+    await controller.findAll(paginationQuery, user);
+
+    expect(postsService.findAll).toHaveBeenCalledWith(
+      paginationQuery,
+      user.sub,
     );
   });
 });
