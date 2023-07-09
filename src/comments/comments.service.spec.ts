@@ -14,6 +14,10 @@ const createMockRepository = <T = any>(): MockRepository<T> => ({
   update: jest.fn(),
 });
 
+const commentId = 1;
+const email = 'test@example.com';
+const comment = { id: commentId, email } as Comment;
+
 describe('CommentsService', () => {
   let service: CommentsService;
   let commentRepository: MockRepository;
@@ -40,10 +44,9 @@ describe('CommentsService', () => {
   describe('findOne', () => {
     describe('when comment with ID exists', () => {
       it('should return the comment object', async () => {
-        const commentId = 1;
         const comment = { id: commentId, body: 'Test comment' };
-
         commentRepository.findOne.mockResolvedValueOnce(comment);
+
         const result = await service.findOne(commentId);
 
         expect(commentRepository.findOne).toHaveBeenCalledWith({
@@ -56,10 +59,10 @@ describe('CommentsService', () => {
 
     describe('otherwise', () => {
       it('should throw the "NotFoundException"', async () => {
-        const commentId = 1;
         commentRepository.findOne.mockResolvedValueOnce(undefined);
 
         const promise = service.findOne(commentId);
+
         await expect(promise).rejects.toThrow(
           new NotFoundException(`Comment #${commentId} not found`),
         );
@@ -71,6 +74,7 @@ describe('CommentsService', () => {
     it('should find all comments', async () => {
       const paginationQuery = { limit: 10, offset: 0 };
       commentRepository.find.mockResolvedValueOnce([]);
+
       const result = await service.findAll(paginationQuery);
 
       expect(commentRepository.find).toHaveBeenCalledWith({
@@ -85,26 +89,17 @@ describe('CommentsService', () => {
   describe('update', () => {
     describe('when comment with ID exists', () => {
       it('should update a comment', async () => {
-        const commentId = 1;
-        const email = 'test@example.com';
         const updateCommentDto = { body: 'Updated comment' };
-        const comment = {
-          id: commentId,
-          name: 'test',
-          body: 'Test comment',
-          email,
-        } as Comment;
-
         jest.spyOn(service, 'findOne').mockResolvedValueOnce(comment);
         jest
           .spyOn(service, 'verifyCommentOwnership')
           .mockImplementationOnce(() => {});
-
         const updateSpy = commentRepository.update.mockResolvedValueOnce({
           affected: 1,
         });
 
         const result = await service.update(commentId, updateCommentDto, email);
+
         expect(updateSpy).toHaveBeenCalledWith(commentId, {
           ...comment,
           ...updateCommentDto,
@@ -114,29 +109,26 @@ describe('CommentsService', () => {
     });
     describe('otherwise', () => {
       it('should throw the "NotFoundException', async () => {
-        const commentId = 1;
-        const email = 'test@example.com';
         const updateCommentDto = { body: 'Updated comment' };
-
         commentRepository.findOne.mockResolvedValueOnce(undefined);
 
         const promise = service.update(commentId, updateCommentDto, email);
+
         await expect(promise).rejects.toThrow(
           new NotFoundException(`Comment #${commentId} not found`),
         );
       });
 
       it('should throw the "UnauthorizedException', async () => {
-        const commentId = 1;
-        const email = 'test@example.com';
         const updateCommentDto = { body: 'Updated comment' };
         const comment = {
           id: commentId,
           email: 'test2@example.com',
         } as Comment;
-
         jest.spyOn(service, 'findOne').mockResolvedValueOnce(comment);
+
         const promise = service.update(commentId, updateCommentDto, email);
+
         await expect(promise).rejects.toThrow(
           new UnauthorizedException(`This comment does not belong to you`),
         );
@@ -146,15 +138,10 @@ describe('CommentsService', () => {
 
   describe('remove', () => {
     it('when comment with ID exists', async () => {
-      const commentId = 1;
-      const email = 'test@example.com';
-      const comment = { id: commentId, email: email } as Comment;
-
       jest.spyOn(service, 'findOne').mockResolvedValueOnce(comment);
       jest
         .spyOn(service, 'verifyCommentOwnership')
         .mockImplementationOnce(() => {});
-
       const removeSpy = commentRepository.remove.mockResolvedValueOnce(comment);
 
       const result = await service.remove(commentId, email);
@@ -165,30 +152,27 @@ describe('CommentsService', () => {
 
     describe('otherwise', () => {
       it('should throw the "NotFoundException', async () => {
-        const commentId = 1;
-        const email = 'test@example.com';
-
         commentRepository.findOne.mockResolvedValueOnce(undefined);
         jest
           .spyOn(service, 'verifyCommentOwnership')
           .mockImplementationOnce(() => {});
 
         const promise = service.remove(commentId, email);
+
         await expect(promise).rejects.toThrow(
           new NotFoundException(`Comment #${commentId} not found`),
         );
       });
 
       it('should throw the "UnauthorizedException', async () => {
-        const commentId = 1;
-        const email = 'test@example.com';
         const comment = {
           id: commentId,
           email: 'test2@example.com',
         } as Comment;
-
         commentRepository.findOne.mockResolvedValueOnce(comment);
+
         const promise = service.remove(commentId, email);
+
         await expect(promise).rejects.toThrow(
           new UnauthorizedException(`This comment does not belong to you`),
         );
