@@ -42,4 +42,13 @@ describe('CommentsController', () => {
 
     expect(commentService.findAll).toHaveBeenCalledWith(paginationQuery);
   });
+
+  it('should call method findOne in CommentsService', async () => {
+    const commentId = '1';
+    jest.spyOn(commentService, 'findOne');
+
+    await controller.findOne(commentId);
+
+    expect(commentService.findOne).toHaveBeenCalledWith(+commentId);
+  });
 });
