@@ -3,6 +3,7 @@ import { PostsController } from './posts.controller';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { ActiveUserData } from '../iam/interfaces/active-user-data.interface';
+import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 
 const user: ActiveUserData = {
   sub: 1,
@@ -53,5 +54,23 @@ describe('PostsController', () => {
     await controller.create(createPostDto, user);
 
     expect(postsService.create).toHaveBeenCalledWith(createPostDto, user.sub);
+  });
+
+  it('should call method createComment in PostsService', async () => {
+    const postId = '1';
+    const createCommentDto: CreateCommentDto = {
+      body: 'body comment',
+    };
+
+    jest.spyOn(postsService, 'createComment');
+
+    await controller.createComment(postId, createCommentDto, user);
+
+    expect(postsService.createComment).toHaveBeenCalledWith(
+      +postId,
+      createCommentDto,
+      user.username,
+      user.email,
+    );
   });
 });
