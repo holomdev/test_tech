@@ -20,6 +20,19 @@ const createMockRepository = <T = any>(): MockRepository<T> => ({
   save: jest.fn(),
 });
 
+const postId = 1;
+const userId = 10;
+
+const createPostDto: CreatePostDto = {
+  title: 'Test Post',
+  body: 'This is a test post',
+};
+
+const user = {
+  id: userId,
+  email: 'test@example.com',
+} as User;
+
 describe('PostsService', () => {
   let service: PostsService;
   let commentRepository: MockRepository;
@@ -58,8 +71,6 @@ describe('PostsService', () => {
   describe('findOne', () => {
     describe('when post with ID exists', () => {
       it('should return the post object', async () => {
-        const postId = 1;
-        const userId = 1;
         const post = {
           id: postId,
           title: 'post title',
@@ -82,9 +93,6 @@ describe('PostsService', () => {
 
     describe('otherwise', () => {
       it('should throw the "NotFoundException"', async () => {
-        const postId = 1;
-        const userId = 1;
-
         postRepository.findOne.mockReturnValueOnce(undefined);
         const promise = service.findOne(postId, userId);
 
@@ -97,7 +105,6 @@ describe('PostsService', () => {
 
   describe('findAll', () => {
     it('should find all posts', async () => {
-      const userId = 1;
       const paginationQuery = { limit: 10, offset: 0 };
 
       postRepository.find.mockResolvedValueOnce([]);
@@ -120,15 +127,6 @@ describe('PostsService', () => {
   describe('create', () => {
     describe('when user exists', () => {
       it('should create a post', async () => {
-        const userId = 1;
-        const createPostDto: CreatePostDto = {
-          title: 'Test Post',
-          body: 'This is a test post',
-        };
-        const user = {
-          id: userId,
-          email: 'test@example.com',
-        } as User;
         const post = {
           ...createPostDto,
           user,
@@ -161,11 +159,6 @@ describe('PostsService', () => {
 
     describe('otherwise', () => {
       it('should throw a NotFoundException', async () => {
-        const createPostDto: CreatePostDto = {
-          title: 'Test Post',
-          body: 'This is a test post',
-        };
-        const userId = 1;
         userRepository.findOne.mockReturnValueOnce(undefined);
 
         const promise = service.create(createPostDto, userId);
@@ -183,8 +176,6 @@ describe('PostsService', () => {
   describe('update', () => {
     describe('when post with ID exists', () => {
       it('should update a post', async () => {
-        const postId = 1;
-        const userId = 10;
         const updatePostDto: UpdatePostDto = {
           body: 'a new body',
         };
@@ -215,8 +206,6 @@ describe('PostsService', () => {
 
     describe('otherwise', () => {
       it('should throw a NotFoundException', async () => {
-        const postId = 1;
-        const userId = 10;
         const updatePostDto: UpdatePostDto = {
           body: 'a new body',
         };
@@ -235,14 +224,6 @@ describe('PostsService', () => {
   describe('remove', () => {
     describe('when post with ID exists', () => {
       it('should remove a post', async () => {
-        const postId = 1;
-        const userId = 10;
-
-        const user = {
-          id: userId,
-          email: 'test@example.com',
-        } as User;
-
         const post = {
           id: postId,
           title: 'Test Post',
@@ -271,9 +252,6 @@ describe('PostsService', () => {
 
     describe('otherwise', () => {
       it('should throw a NotFoundException', async () => {
-        const postId = 1;
-        const userId = 10;
-
         postRepository.findOne.mockResolvedValueOnce(undefined);
         const promise = service.remove(postId, userId);
 
@@ -288,7 +266,6 @@ describe('PostsService', () => {
   describe('createComment', () => {
     describe('when post with ID exists', () => {
       it('should create comment from post', async () => {
-        const postId = 1;
         const createCommentDto: CreateCommentDto = {
           body: 'this is a example comment',
         };
@@ -331,7 +308,6 @@ describe('PostsService', () => {
 
     describe('otherwise', () => {
       it('should throw a NotFoundException', async () => {
-        const postId = 1;
         const createCommentDto: CreateCommentDto = {
           body: 'this is a example comment',
         };
@@ -357,7 +333,6 @@ describe('PostsService', () => {
   describe('findAllComments', () => {
     describe('when post with ID exists', () => {
       it('should find comments from post', async () => {
-        const postId = 1;
         const paginationQuery = { limit: 10, offset: 0 };
         commentRepository.find.mockResolvedValueOnce([]);
 
