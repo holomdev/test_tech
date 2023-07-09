@@ -7,6 +7,8 @@ import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 
+const postId = '1';
+
 const user: ActiveUserData = {
   sub: 1,
   email: 'test@example.com',
@@ -64,7 +66,6 @@ describe('PostsController', () => {
   });
 
   it('should call method createComment in PostsService', async () => {
-    const postId = '1';
     const createCommentDto: CreateCommentDto = {
       body: 'body comment',
     };
@@ -93,7 +94,6 @@ describe('PostsController', () => {
   });
 
   it('should call method findAllComments in PostsService', async () => {
-    const postId = '1';
     jest.spyOn(postsService, 'findAllComments');
 
     await controller.findAllComments(postId, paginationQuery);
@@ -105,7 +105,6 @@ describe('PostsController', () => {
   });
 
   it('should call method findOne in PostsService', async () => {
-    const postId = '1';
     jest.spyOn(postsService, 'findOne');
 
     await controller.findOne(postId, user);
@@ -114,7 +113,6 @@ describe('PostsController', () => {
   });
 
   it('should call method update in PostsService', async () => {
-    const postId = '1';
     const updatePostDto: UpdatePostDto = {
       title: 'title',
       body: 'body',
@@ -131,7 +129,6 @@ describe('PostsController', () => {
   });
 
   it('should call method remove in PostsService', async () => {
-    const postId = '1';
     jest.spyOn(postsService, 'remove');
 
     await controller.remove(postId, user);
