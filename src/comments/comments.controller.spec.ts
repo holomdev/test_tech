@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CommentsController } from './comments.controller';
 import { CommentsService } from './comments.service';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 
 describe('CommentsController', () => {
   let controller: CommentsController;
@@ -14,6 +15,9 @@ describe('CommentsController', () => {
           provide: CommentsService,
           useValue: {
             findAll: jest.fn(),
+            findOne: jest.fn(),
+            update: jest.fn(),
+            remove: jest.fn(),
           },
         },
       ],
@@ -25,5 +29,17 @@ describe('CommentsController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  it('should call method findAll in CommentsService', async () => {
+    const paginationQuery: PaginationQueryDto = {
+      limit: 10,
+      offset: 0,
+    };
+    jest.spyOn(commentService, 'findAll');
+
+    await controller.findAll(paginationQuery);
+
+    expect(commentService.findAll).toHaveBeenCalledWith(paginationQuery);
   });
 });
