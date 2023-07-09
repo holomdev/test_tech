@@ -18,6 +18,24 @@ const createMockRepository = <T = any>(): MockRepository<T> => ({
   findOneBy: jest.fn(),
 });
 
+const signUpDto: SignUpDto = {
+  name: 'test_name',
+  email: 'test@example.com',
+  username: 'username_test',
+  password: 'password123',
+};
+
+const signInDto: SignInDto = {
+  email: 'test@example.com',
+  password: 'password123',
+};
+
+const user = {
+  id: 1,
+  email: 'test@example.com',
+  password: 'some_hashing_password',
+} as User;
+
 describe('AuthenticationService', () => {
   let service: AuthenticationService;
   let hashingService: HashingService;
@@ -62,17 +80,11 @@ describe('AuthenticationService', () => {
   describe('signUp', () => {
     it('should a user signup', async () => {
       const hashingPass = 'some_hashing_password';
-      const signUpDto: SignUpDto = {
-        name: 'test_name',
-        email: 'test@example.com',
-        username: 'username_test',
-        password: 'password123',
-      };
-
       jest.spyOn(hashingService, 'hash').mockResolvedValueOnce(hashingPass);
       userRepository.save.mockResolvedValueOnce(signUpDto);
 
       const result = await service.signUp(signUpDto);
+
       expect(userRepository.save).toHaveBeenCalledWith({
         ...signUpDto,
         password: hashingPass,
@@ -83,15 +95,10 @@ describe('AuthenticationService', () => {
 
     describe('otherwise', () => {
       it('should throw a Error', async () => {
-        const signUpDto: SignUpDto = {
-          name: 'test_name',
-          email: 'test@example.com',
-          username: 'username_test',
-          password: 'password123',
-        };
         userRepository.save.mockRejectedValueOnce(new Error());
 
         const promise = service.signUp(signUpDto);
+
         await expect(promise).rejects.toThrowError();
       });
     });
@@ -100,16 +107,6 @@ describe('AuthenticationService', () => {
   describe('signIn', () => {
     it('should a user signin', async () => {
       const accessToken = 'access123';
-      const signInDto: SignInDto = {
-        email: 'test@example.com',
-        password: 'password123',
-      };
-      const user = {
-        id: 1,
-        email: 'test@example.com',
-        password: 'some_hashing_password',
-      } as User;
-
       userRepository.findOneBy.mockResolvedValueOnce(user);
       jest.spyOn(hashingService, 'compare').mockResolvedValueOnce(true);
       jest.spyOn(jwtService, 'signAsync').mockResolvedValueOnce(accessToken);
@@ -134,12 +131,8 @@ describe('AuthenticationService', () => {
 
     describe('otherwise', () => {
       it('should throw a UnauthorizedException when user does not exists', async () => {
-        const signInDto: SignInDto = {
-          email: 'test@example.com',
-          password: 'password123',
-        };
-
         userRepository.findOneBy.mockResolvedValueOnce(undefined);
+
         const promise = service.signIn(signInDto);
 
         await expect(promise).rejects.toThrow(
@@ -148,15 +141,6 @@ describe('AuthenticationService', () => {
       });
 
       it('should throw a UnauthorizedException when Password does not match', async () => {
-        const signInDto: SignInDto = {
-          email: 'test@example.com',
-          password: 'password123',
-        };
-        const user = {
-          id: 1,
-          email: 'test@example.com',
-          password: 'some_hashing_password',
-        } as User;
         userRepository.findOneBy.mockResolvedValueOnce(user);
         jest.spyOn(hashingService, 'compare').mockResolvedValueOnce(false);
 
