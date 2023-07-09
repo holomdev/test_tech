@@ -2,6 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CommentsController } from './comments.controller';
 import { CommentsService } from './comments.service';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import { UpdateCommentDto } from './dto/update-comment.dto';
+import { ActiveUserData } from '../iam/interfaces/active-user-data.interface';
 
 describe('CommentsController', () => {
   let controller: CommentsController;
@@ -50,5 +52,28 @@ describe('CommentsController', () => {
     await controller.findOne(commentId);
 
     expect(commentService.findOne).toHaveBeenCalledWith(+commentId);
+  });
+
+  it('should call method update in CommentsService', async () => {
+    const commentId = '1';
+    const updateCommentDto: UpdateCommentDto = {
+      body: 'a body comment',
+    };
+    const user: ActiveUserData = {
+      sub: 1,
+      email: 'test@example.com',
+      name: 'name',
+      username: 'username',
+    };
+
+    jest.spyOn(commentService, 'update');
+
+    await controller.update(commentId, updateCommentDto, user);
+
+    expect(commentService.update).toHaveBeenCalledWith(
+      +commentId,
+      updateCommentDto,
+      user.email,
+    );
   });
 });
