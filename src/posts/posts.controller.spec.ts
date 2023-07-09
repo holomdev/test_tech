@@ -102,4 +102,13 @@ describe('PostsController', () => {
       paginationQuery,
     );
   });
+
+  it('should call method findOne in PostsService', async () => {
+    const postId = '1';
+    jest.spyOn(postsService, 'findOne');
+
+    await controller.findOne(postId, user);
+
+    expect(postsService.findOne).toHaveBeenCalledWith(+postId, user.sub);
+  });
 });
