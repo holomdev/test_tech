@@ -38,6 +38,26 @@ describe('[Feature] Authentication - /authentication (e2e)', () => {
       .expect(HttpStatus.CREATED);
   });
 
+  it('sign-up [POST /]: should throw an error for a bad email', async () => {
+    const user: SignUpDto = {
+      name: 'test_name',
+      email: 'testexample.com',
+      username: 'username_test',
+      password: 'password123',
+    };
+    return await request(app.getHttpServer())
+      .post('/authentication/sign-up')
+      .send(user)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          message: ['email must be an email'],
+          error: 'Bad Request',
+          statusCode: 400,
+        });
+        expect(HttpStatus.BAD_REQUEST);
+      });
+  });
+
   it.todo('sign-in [POST /]');
 
   afterAll(async () => {
