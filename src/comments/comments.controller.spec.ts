@@ -5,6 +5,15 @@ import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { ActiveUserData } from '../iam/interfaces/active-user-data.interface';
 
+const commentId = '1';
+
+const user: ActiveUserData = {
+  sub: 1,
+  email: 'test@example.com',
+  name: 'name',
+  username: 'username',
+};
+
 describe('CommentsController', () => {
   let controller: CommentsController;
   let commentService: CommentsService;
@@ -46,7 +55,6 @@ describe('CommentsController', () => {
   });
 
   it('should call method findOne in CommentsService', async () => {
-    const commentId = '1';
     jest.spyOn(commentService, 'findOne');
 
     await controller.findOne(commentId);
@@ -55,17 +63,9 @@ describe('CommentsController', () => {
   });
 
   it('should call method update in CommentsService', async () => {
-    const commentId = '1';
     const updateCommentDto: UpdateCommentDto = {
       body: 'a body comment',
     };
-    const user: ActiveUserData = {
-      sub: 1,
-      email: 'test@example.com',
-      name: 'name',
-      username: 'username',
-    };
-
     jest.spyOn(commentService, 'update');
 
     await controller.update(commentId, updateCommentDto, user);
@@ -78,14 +78,6 @@ describe('CommentsController', () => {
   });
 
   it('should call method remove in CommentsService', async () => {
-    const commentId = '1';
-    const user: ActiveUserData = {
-      sub: 1,
-      email: 'test@example.com',
-      name: 'name',
-      username: 'username',
-    };
-
     jest.spyOn(commentService, 'remove');
 
     await controller.remove(commentId, user);
