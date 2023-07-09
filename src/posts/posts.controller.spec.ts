@@ -1,6 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PostsController } from './posts.controller';
 import { PostsService } from './posts.service';
+import { CreatePostDto } from './dto/create-post.dto';
+import { ActiveUserData } from '../iam/interfaces/active-user-data.interface';
+
+const user: ActiveUserData = {
+  sub: 1,
+  email: 'test@example.com',
+  name: 'name',
+  username: 'username',
+};
 
 describe('PostsController', () => {
   let controller: PostsController;
@@ -31,5 +40,18 @@ describe('PostsController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  it('should call method create in PostsService', async () => {
+    const createPostDto: CreatePostDto = {
+      title: 'title',
+      body: 'body',
+    };
+
+    jest.spyOn(postsService, 'create');
+
+    await controller.create(createPostDto, user);
+
+    expect(postsService.create).toHaveBeenCalledWith(createPostDto, user.sub);
   });
 });
