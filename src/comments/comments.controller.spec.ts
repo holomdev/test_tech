@@ -76,4 +76,20 @@ describe('CommentsController', () => {
       user.email,
     );
   });
+
+  it('should call method remove in CommentsService', async () => {
+    const commentId = '1';
+    const user: ActiveUserData = {
+      sub: 1,
+      email: 'test@example.com',
+      name: 'name',
+      username: 'username',
+    };
+
+    jest.spyOn(commentService, 'remove');
+
+    await controller.remove(commentId, user);
+
+    expect(commentService.remove).toHaveBeenCalledWith(+commentId, user.email);
+  });
 });
