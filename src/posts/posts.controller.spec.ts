@@ -5,6 +5,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { ActiveUserData } from '../iam/interfaces/active-user-data.interface';
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 
 const user: ActiveUserData = {
   sub: 1,
@@ -110,5 +111,22 @@ describe('PostsController', () => {
     await controller.findOne(postId, user);
 
     expect(postsService.findOne).toHaveBeenCalledWith(+postId, user.sub);
+  });
+
+  it('should call method update in PostsService', async () => {
+    const postId = '1';
+    const updatePostDto: UpdatePostDto = {
+      title: 'title',
+      body: 'body',
+    };
+    jest.spyOn(postsService, 'update');
+
+    await controller.update(postId, updatePostDto, user);
+
+    expect(postsService.update).toHaveBeenCalledWith(
+      +postId,
+      updatePostDto,
+      user.sub,
+    );
   });
 });
