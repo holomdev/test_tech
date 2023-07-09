@@ -13,6 +13,11 @@ const user: ActiveUserData = {
   username: 'username',
 };
 
+const paginationQuery: PaginationQueryDto = {
+  limit: 10,
+  offset: 0,
+};
+
 describe('PostsController', () => {
   let controller: PostsController;
   let postsService: PostsService;
@@ -76,11 +81,6 @@ describe('PostsController', () => {
   });
 
   it('should call method findAll in PostsService', async () => {
-    const paginationQuery: PaginationQueryDto = {
-      limit: 10,
-      offset: 0,
-    };
-
     jest.spyOn(postsService, 'findAll');
 
     await controller.findAll(paginationQuery, user);
@@ -88,6 +88,18 @@ describe('PostsController', () => {
     expect(postsService.findAll).toHaveBeenCalledWith(
       paginationQuery,
       user.sub,
+    );
+  });
+
+  it('should call method findAllComments in PostsService', async () => {
+    const postId = '1';
+    jest.spyOn(postsService, 'findAllComments');
+
+    await controller.findAllComments(postId, paginationQuery);
+
+    expect(postsService.findAllComments).toHaveBeenCalledWith(
+      +postId,
+      paginationQuery,
     );
   });
 });
