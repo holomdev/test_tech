@@ -36,7 +36,7 @@ Por defecto la base de datos para desarrollo usa el puerto `5432` y la base de d
 </p>
 
 ```bash
-$ docker-compose up -d
+$ docker-compose up -d db-tech
 ```
 
 ### Configurar las variables de entorno
@@ -109,13 +109,64 @@ Para poder visualizar la documentación en la UI de swagger, solo es necesario c
 
 ## Test
 
+### Test unitarios
+Para correr los test unitarios solo basta el siguiente comando: 
+
 ```bash
-# unit tests
 $ npm run test
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+$ npm run test:watch //modo watch
 ```
+Ejemplo de salida
+
+```console
+λ npm run test
+
+> test_tech@0.0.1 test
+> jest
+
+ PASS  src/posts/posts.service.spec.ts (10.393 s)
+ PASS  src/comments/comments.service.spec.ts (10.416 s)
+ PASS  src/iam/authentication/authentication.service.spec.ts (10.485 s)
+ PASS  src/posts/posts.controller.spec.ts (11.059 s)
+ PASS  src/comments/comments.controller.spec.ts (11.123 s)
+ PASS  src/iam/authentication/authentication.controller.spec.ts (11.164 s)
+
+Test Suites: 6 passed, 6 total
+Tests:       45 passed, 45 total
+Snapshots:   0 total
+Time:        12.379 s, estimated 14 s
+Ran all test suites.
+```
+
+### Test e2e
+Aunque hay varias técnicas para hacer los test e2e como puede ser mock a las funciones de la bd, o suplantar por una db tipo sqlite, en esta ocasión optamos por lanzar un base de datos en docker cada que corre un test e2e y esta misma se destruye al terminar el test para asegurar que el test es lo más real posible.
+
+Esto se tiene automatizado en el `package.json` con los scripts `pretest` y `posttest`
+
+> **Warning**
+> Las pruebas e2e se deben correr por separado, ya que el proceso de correrlo es pesado, a continuación, se dejan los comandos para poder hacer esto.
+
+#### App e2e
+
+```bash
+$ npm run test:e2e -- app
+```
+
+#### Authentication e2e
+```bash
+$ npm run test:e2e -- authentication
+```
+
+#### Posts e2e
+```bash
+$ npm run test:e2e -- posts
+```
+
+#### Comments e2e
+```bash
+$ npm run test:e2e -- comments
+```
+
+## Estructura del proyecto
+En construcción...
