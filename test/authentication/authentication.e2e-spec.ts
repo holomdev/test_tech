@@ -3,6 +3,7 @@ import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { SignUpDto } from '../../src/iam/authentication/dto/sign-up.dto';
+import { SignInDto } from '../../src/iam/authentication/dto/sign-in.dto';
 
 describe('[Feature] Authentication - /authentication (e2e)', () => {
   let app: INestApplication;
@@ -97,7 +98,73 @@ describe('[Feature] Authentication - /authentication (e2e)', () => {
       });
   });
 
-  it.todo('sign-in [POST /]');
+  it('sign-in [POST /]: should return accessToken for correct username and password', async () => {
+    const credentials: SignInDto = {
+      email: 'test@example.com',
+      password: 'password123',
+    };
+    const response = await request(app.getHttpServer())
+      .post('/authentication/sign-in')
+      .send(credentials)
+      .expect(HttpStatus.OK);
+
+    const jwtToken = response.body.accessToken;
+
+    expect(jwtToken).toMatch(
+      /^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/,
+    );
+  });
+
+  it('sign-in [POST /]: should throw an error for bad email', async () => {
+    return await request(app.getHttpServer())
+      .post('/authentication/sign-in')
+      .send({
+        email: 'bademail.com',
+        password: 'Password123',
+      })
+      .then(({ body }) => {
+        expect(body).toEqual({
+          message: ['email must be an email'],
+          error: 'Bad Request',
+          statusCode: 400,
+        });
+        expect(HttpStatus.BAD_REQUEST);
+      });
+  });
+
+  it('sign-in [POST /]: should throw an error for non-existent user', async () => {
+    return await request(app.getHttpServer())
+      .post('/authentication/sign-in')
+      .send({
+        email: 'another_uer@email.com',
+        password: 'Password123',
+      })
+      .then(({ body }) => {
+        expect(body).toEqual({
+          message: 'User does not exists',
+          error: 'Unauthorized',
+          statusCode: 401,
+        });
+        expect(HttpStatus.UNAUTHORIZED);
+      });
+  });
+
+  it('sign-in [POST /]: should throw an error for incorrect password', async () => {
+    return await request(app.getHttpServer())
+      .post('/authentication/sign-in')
+      .send({
+        email: 'test@example.com',
+        password: 'Password1234',
+      })
+      .then(({ body }) => {
+        expect(body).toEqual({
+          message: 'Password does not match',
+          error: 'Unauthorized',
+          statusCode: 401,
+        });
+        expect(HttpStatus.UNAUTHORIZED);
+      });
+  });
 
   afterAll(async () => {
     await app.close();
