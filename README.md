@@ -170,3 +170,25 @@ $ npm run test:e2e -- comments
 
 ## Estructura del proyecto
 En construcción...
+```mermaid
+stateDiagram-v2
+  state "Tech test" as Tech_test {
+    [*] --> Tech_test.Iam
+    Tech_test.Iam --> Tech_test.signin : Login
+    Tech_test.Iam --> Tech_test.signup : Register
+    Tech_test.Iam --> Tech_test.AuthenticationGuard : request
+    Tech_test.AuthenticationGuard --> Tech_test.AccessTokenGuard : verify JWT
+    Tech_test.AuthenticationGuard --> Tech_test.Posts_CRUD : posts...
+    Tech_test.AuthenticationGuard --> Tech_test.Comments_CRUD : comments...
+    Tech_test.signin --> Tech_test.User : find
+    Tech_test.signup --> Tech_test.User : save
+    state "Iam" as Tech_test.Iam
+    state "signin" as Tech_test.signin
+    state "signup" as Tech_test.signup
+    state "AuthenticationGuard" as Tech_test.AuthenticationGuard
+    state "AccessTokenGuard" as Tech_test.AccessTokenGuard
+    state "Posts CRUD" as Tech_test.Posts_CRUD
+    state "Comments CRUD" as Tech_test.Comments_CRUD
+    state "User" as Tech_test.User
+  }
+```
