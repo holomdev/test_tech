@@ -66,7 +66,41 @@ $ npm install
 ```
 
 ### Ejecutando las migraciones
-En construcción...
+
+#### Crear migraciones
+Para poder crear migraciones solo basta el siguiente comando. Esto generara un archivo dentro del directorio `src/migrations`.
+```bash
+$  npx typeorm migration:create src/migrations/NombreMigracion
+```
+
+#### Correr migraciones existentes
+Para poder correr las migraciones, antes se debe haber seteado las variables de entorno en el archivo `.env`.
+Después solo basta correr los siguientes dos comandos.
+```bash
+$ npm run build
+$ npx typeorm migration:run -d dist/typeorm-cli.config
+```
+
+#### Ejemplo de la salida
+
+```bash
+λ npx typeorm migration:run -d dist/typeorm-cli.config
+query: SELECT * FROM current_schema()
+query: SELECT version();
+query: SELECT * FROM "information_schema"."tables" WHERE "table_schema" = 'public' AND "table_name" = 'migrations'
+query: CREATE TABLE "migrations" ("id" SERIAL NOT NULL, "timestamp" bigint NOT NULL, "name" character varying NOT NULL, CONSTRAINT "PK_8c82d7f526340ab734260ea46be" PRIMARY KEY ("id"))
+query: SELECT * FROM "migrations" "migrations" ORDER BY "id" DESC
+0 migrations are already loaded in the database.
+3 migrations were found in the source code.
+3 migrations are new migrations must be executed.
+query: START TRANSACTION
+query: CREATE TABLE "user"
+      (
+        "id" SERIAL NOT NULL,
+        "name" character varying NOT NULL,
+        "username" character varying NOT NULL,
+...
+```
 
 ### Ejecutando los seeders
 En construcción...

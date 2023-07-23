@@ -12,6 +12,7 @@ import { IamModule } from './iam/iam.module';
   imports: [
     ConfigModule.forRoot({
       envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
+      isGlobal: true,
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
