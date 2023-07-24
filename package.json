@@ -19,7 +19,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "pretest:e2e": "docker-compose stop test-db-tech && docker-compose rm -f test-db-tech && docker-compose up -d test-db-tech",
     "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json",
-    "posttest:e2e": "docker-compose stop test-db-tech && docker-compose rm -f test-db-tech"
+    "posttest:e2e": "docker-compose stop test-db-tech && docker-compose rm -f test-db-tech",
+    "data:sync": "ts-node -r tsconfig-paths/register ./src/seeders/seed.helper.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -30,6 +31,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.0.12",
     "@nestjs/typeorm": "^10.0.0",
+    "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
