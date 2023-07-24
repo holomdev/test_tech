@@ -105,7 +105,7 @@ query: CREATE TABLE "user"
 ### 3.6 Ejecutando los seeders jsonplaceholder.typicode
 Después de haber ejecutado las migraciones para tener una estructura de tablas limpia, procedemos a llenar la base de datos de data extraída directamente de https://jsonplaceholder.typicode.com , para ellos solo es cuestión de correr los siguientes comandos.
 
-Estos comandos ejecutaran un script que consultara la pagina web y hará las inserciones con sus relaciones.
+Estos comandos ejecutaran un script que consultara la pagina web y hará las inserciones con sus relaciones('src/seeders').
 
 
 ```bash
